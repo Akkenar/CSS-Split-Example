@@ -1,5 +1,6 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
   mode: 'production',
@@ -35,6 +36,15 @@ export default {
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
       chunkFilename: '[name].[hash].css',
+    }),
+    new HtmlWebpackPlugin({
+      minify: {
+        collapseWhitespace: true,
+        preserveLineBreaks: true,
+        removeComments: true,
+      },
+      filename: 'index.html',
+      template: path.join(__dirname, 'src', 'index.html'),
     }),
   ],
 };
