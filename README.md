@@ -1,7 +1,7 @@
 # CSS Split Example Project
 
-The goal of this repository is to demonstrate CSS split
-with Webpack, mini-css-extract-plugin and dynamic imports.
+The goal of this repository is to demonstrate CSS split with Webpack 5, mini-css-extract-plugin and
+dynamic imports.
 
 ## Getting Started
 
@@ -14,9 +14,10 @@ npm run build
 
 The idea is to discriminate the critical CSS by creating SASS files containing `.critical.scss`.
 
-We'll extract and load the critical CSS using [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)
-
-We'll extract and load the non critical CSS using [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
+- Critical CSS is extracted in one css file using 
+[extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)
+- Non critical CSS is extracted in dynamically loaded chunks using
+[mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
 
 ### Webpack Config
 
@@ -76,3 +77,22 @@ however be deferred, as illustrated below.
     <link rel="stylesheet" href="main.css">
 </noscript>
 ```
+
+## Current issue
+
+Unfortunately, `extract-text-weback-plugin` has an issue with the above approach.
+
+When executing Webpack, you'll notice the following error:
+
+```
+let moduleSource = chunkModule.source(compilation.dependencyTemplates, compilation.runtimeTemplate);
+                                     ^
+
+TypeError: chunkModule.source is not a function
+    at Function.renderExtractedChunk (node_modules\extract-text-webpack-plugin\dist\index
+    .js:115:38)
+
+```
+
+You'll need a special version of `extract-text-weback-plugin` that ignores the chunk if 
+`chunkModule.source` is not a function.
