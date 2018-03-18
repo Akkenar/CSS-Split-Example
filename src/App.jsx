@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './App.critical.scss';
 import './App.scss';
 
 class App extends React.Component {

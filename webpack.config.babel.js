@@ -1,6 +1,12 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+const criticalCss = new ExtractTextPlugin({
+  filename: '[name].critical.css',
+  allChunks: true,
+});
 
 export default {
   mode: 'development',
@@ -10,8 +16,8 @@ export default {
 
   output: {
     path: path.join(__dirname, 'target', 'build'),
-    filename: '[name].[hash].js',
-    chunkFilename: '[name].[hash].js',
+    filename: '[name].js',
+    chunkFilename: '[name].js',
   },
 
   resolve: {
@@ -26,7 +32,12 @@ export default {
         use: ['babel-loader?cacheDirectory'],
       },
       {
-        test: /\.scss$/,
+        test: /\.critical\.scss$/,
+        use: criticalCss.extract(['css-loader', 'sass-loader']),
+      },
+      {
+        test: /(?!\.critical)\.scss$/,
+        exclude: /critical/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
@@ -34,9 +45,10 @@ export default {
 
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-      chunkFilename: '[name].[hash].css',
+      filename: '[name].css',
+      chunkFilename: '[name].css',
     }),
+    criticalCss,
     new HtmlWebpackPlugin({
       minify: {
         collapseWhitespace: true,
