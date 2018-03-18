@@ -3,13 +3,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const criticalCss = new ExtractTextPlugin({
-  filename: '[name].critical.css',
-  allChunks: true,
-});
-
 export default {
-  mode: 'development',
+  mode: 'production',
   target: 'web',
   entry: './entry.js',
   context: path.join(__dirname, 'src'),
@@ -33,7 +28,7 @@ export default {
       },
       {
         test: /\.critical\.scss$/,
-        use: criticalCss.extract(['css-loader', 'sass-loader']),
+        use: ExtractTextPlugin.extract(['css-loader', 'sass-loader']),
       },
       {
         test: /(?!\.critical)\.scss$/,
@@ -44,11 +39,16 @@ export default {
   },
 
   plugins: [
+    // Non-critical CSS loaded dynamically using Webpack modules
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css',
     }),
-    criticalCss,
+    // Critical CSS loaded statically, typically used for SSR.
+    new ExtractTextPlugin({
+      filename: '[name].critical.css',
+      allChunks: true,
+    }),
     new HtmlWebpackPlugin({
       minify: {
         collapseWhitespace: true,
