@@ -5,10 +5,12 @@ import './MyComponent.scss';
 
 const MyComponent = () => {
   return (
-    <main>
+    <React.Fragment>
       <h1>My Component</h1>
-      <p className="MyComponent__content">This is a content</p>
-    </main>
+      <p className="MyComponent__content">
+        This is a content
+      </p>
+    </React.Fragment>
   );
 };
 

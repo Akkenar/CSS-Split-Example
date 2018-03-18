@@ -3,7 +3,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 export default {
-  mode: 'production',
+  mode: 'development',
   target: 'web',
   entry: './entry.js',
   context: path.join(__dirname, 'src'),
