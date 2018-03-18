@@ -15,7 +15,7 @@
     "babel-preset-env": "1.6.1",
     "babel-preset-react": "6.24.1",
     "css-loader": "0.28.11",
-    "extract-text-webpack-plugin": "4.0.0-beta.0",
+    "extract-text-webpack-plugin": "git+https://github.com/Akkenar/extract-text-webpack-plugin.git#Fix_Module_With_No_Source",
     "html-webpack-plugin": "3.0.6",
     "ignore-loader": "0.1.2",
     "mini-css-extract-plugin": "0.2.0",
