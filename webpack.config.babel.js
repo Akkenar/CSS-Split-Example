@@ -2,12 +2,18 @@ import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 
 export default {
   mode: 'production',
   target: 'web',
   entry: './entry.js',
   context: path.join(__dirname, 'src'),
+
+  stats: {
+    // Disable the verbose output on build
+    children: false,
+  },
 
   output: {
     path: path.join(__dirname, 'target', 'build'),
@@ -49,6 +55,7 @@ export default {
       filename: '[name].critical.css',
       allChunks: true,
     }),
+    new OptimizeCSSAssetsPlugin(),
     new HtmlWebpackPlugin({
       minify: {
         collapseWhitespace: true,
