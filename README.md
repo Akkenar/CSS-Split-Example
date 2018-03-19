@@ -1,6 +1,6 @@
 # CSS Split Example Project
 
-The goal of this repository is to demonstrate CSS split with Webpack 5, mini-css-extract-plugin and
+The goal of this repository is to demonstrate CSS split with Webpack 4. mini-css-extract-plugin and
 dynamic imports.
 
 ## Getting Started
