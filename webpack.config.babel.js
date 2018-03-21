@@ -1,13 +1,17 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+
+const vendors = ['react', 'react-dom'];
 
 export default {
   mode: 'production',
   target: 'web',
-  entry: './entry.js',
+  entry: {
+    main: './entry.js',
+    vendors,
+  },
   context: path.join(__dirname, 'src'),
 
   stats: {
@@ -25,6 +29,36 @@ export default {
     extensions: ['.js', '.jsx', '.scss'],
   },
 
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        default: false,
+        // Custom common chunk
+        bundle: {
+          name: 'commons',
+          chunks: 'all',
+          minChunks: 3,
+          reuseExistingChunk: false,
+        },
+        // Customer vendor
+        vendors: {
+          chunks: 'initial',
+          name: 'vendors',
+          test: 'vendors',
+        },
+        // Extract the critical CSS into a dedicated file
+        styles: {
+          name: 'critical',
+          test: /(\.critical)\.s?css$/,
+          chunks: 'all',
+          minChunks: 1,
+          reuseExistingChunk: true,
+          enforce: true,
+        },
+      },
+    },
+  },
+
   module: {
     rules: [
       {
@@ -33,27 +67,16 @@ export default {
         use: ['babel-loader?cacheDirectory'],
       },
       {
-        test: /\.critical\.scss$/,
-        use: ExtractTextPlugin.extract(['css-loader', 'sass-loader']),
-      },
-      {
-        test: /(?!\.critical)\.scss$/,
-        exclude: /critical/,
+        test: /\.scss$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },
 
   plugins: [
-    // Non-critical CSS loaded dynamically using Webpack modules
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css',
-    }),
-    // Critical CSS loaded statically, typically used for SSR.
-    new ExtractTextPlugin({
-      filename: '[name].critical.css',
-      allChunks: true,
     }),
     new OptimizeCSSAssetsPlugin(),
     new HtmlWebpackPlugin({
