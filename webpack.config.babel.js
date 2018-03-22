@@ -39,6 +39,7 @@ export default {
           chunks: 'all',
           minChunks: 3,
           reuseExistingChunk: false,
+          priority: -30,
         },
         // Customer vendor
         vendors: {
@@ -54,6 +55,10 @@ export default {
           minChunks: 1,
           reuseExistingChunk: true,
           enforce: true,
+          // It's essential that the priority of the critical styles is
+          // greater than the priority of the commons, otherwise
+          // Webpack will put critical styles in commons.css.
+          priority: -20,
         },
       },
     },
