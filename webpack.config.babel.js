@@ -1,16 +1,16 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 
-const vendors = ['react', 'react-dom'];
+const vendor = ['react', 'react-dom'];
 
 export default {
+  name: 'client',
   mode: 'production',
   target: 'web',
   entry: {
-    main: './entry.js',
-    vendors,
+    bundle: './entry.js',
+    vendor,
   },
   context: path.join(__dirname, 'src'),
 
@@ -29,41 +29,6 @@ export default {
     extensions: ['.js', '.jsx', '.scss'],
   },
 
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        default: false,
-        // Custom common chunk
-        bundle: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 3,
-          reuseExistingChunk: false,
-          priority: -30,
-        },
-        // Customer vendor
-        vendors: {
-          chunks: 'initial',
-          name: 'vendors',
-          test: 'vendors',
-        },
-        // Extract the critical CSS into a dedicated file
-        styles: {
-          name: 'critical',
-          test: /(\.critical)\.s?css$/,
-          chunks: 'all',
-          minChunks: 1,
-          reuseExistingChunk: true,
-          enforce: true,
-          // It's essential that the priority of the critical styles is
-          // greater than the priority of the commons, otherwise
-          // Webpack will put critical styles in commons.css.
-          priority: -20,
-        },
-      },
-    },
-  },
-
   module: {
     rules: [
       {
@@ -78,18 +43,50 @@ export default {
     ],
   },
 
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        // Don't generate automatic common chunks
+        default: false,
+        // Don't generate automatic vendor chunks
+        vendors: false,
+        // Custom common chunk
+        bundle: {
+          name: 'commons',
+          chunks: 'all',
+          minChunks: 3,
+          reuseExistingChunk: false,
+          // This priority must be lower than the styles one.
+          priority: -30,
+        },
+        // Custom vendor chunk by name
+        vendor: {
+          chunks: 'initial',
+          name: 'vendor',
+          test: 'vendor',
+        },
+        // Extract the critical CSS into a dedicated file
+        styles: {
+          name: 'critical',
+          test: /(\.critical)\.s?css$/,
+          chunks: 'all',
+          minChunks: 1,
+          enforce: true,
+          // It's essential that the priority of the critical styles is
+          // greater than the priority of the commons, otherwise
+          // Webpack will put critical styles in commons.css.
+          priority: -20,
+        },
+      },
+    },
+  },
+
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css',
     }),
-    new OptimizeCSSAssetsPlugin(),
     new HtmlWebpackPlugin({
-      minify: {
-        collapseWhitespace: true,
-        preserveLineBreaks: true,
-        removeComments: true,
-      },
       filename: 'index.html',
       template: path.join(__dirname, 'src', 'index.html'),
     }),
